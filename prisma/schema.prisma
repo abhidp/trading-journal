@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trade {
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  date             String
+  symbol           String
+  type             String
+  entry            String
+  exit             String
+  quantity         String
+  pnl              Float
+  screenshotUrl    String?
+  technicalAnalysis String?  @db.Text
+  psychologicalNotes String? @db.Text
+  tradeReview      String?  @db.Text
+  rating           String
+}
