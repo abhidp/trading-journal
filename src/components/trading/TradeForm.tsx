@@ -1,3 +1,4 @@
+// src/components/trading/TradeForm.tsx
 'use client';
 
 import React from 'react';
@@ -8,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, Save, X } from 'lucide-react';
 import { TradeEntry } from '@/types/trading';
+import { formatStorageDate } from '@/utils/date';
 
 interface TradeFormProps {
   currentEntry: TradeEntry;
@@ -42,7 +44,7 @@ export const TradeForm: React.FC<TradeFormProps> = ({
             <Input
               type="date"
               name="date"
-              value={currentEntry.date}
+              value={currentEntry.date ? formatStorageDate(currentEntry.date) : ''}
               onChange={onInputChange}
               placeholder="Date"
               required
@@ -169,7 +171,12 @@ export const TradeForm: React.FC<TradeFormProps> = ({
               )}
             </Button>
             {isEditing && (
-              <Button type="button" variant="outline" onClick={onCancelEdit} disabled={isLoading}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onCancelEdit}
+                disabled={isLoading}
+              >
                 <X className="w-4 h-4 mr-2" /> Cancel Edit
               </Button>
             )}
@@ -179,3 +186,5 @@ export const TradeForm: React.FC<TradeFormProps> = ({
     </Card>
   );
 };
+
+export default TradeForm;

@@ -7,6 +7,7 @@ import { TradeCard } from './TradeCard';
 import { ScreenshotModal } from './ScreenshotModal';
 import { TradeEntry, SelectedTrade } from '@/types/trading';
 import { tradingService } from '@/services/trading';
+import { formatDisplayDate } from '@/utils/date';
 
 const initialEntry: TradeEntry = {
   id: 0,
@@ -53,7 +54,21 @@ const TradingJournal: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setCurrentEntry(prev => ({ ...prev, [name]: value }));
+    
+    // For date input, convert from YYYY-MM-DD to DD-MM-YYYY
+    if (name === 'date' && value) {
+      const [year, month, day] = value.split('-');
+      const formattedDate = `${day}-${month}-${year}`;
+      setCurrentEntry(prev => ({
+        ...prev,
+        [name]: formattedDate
+      }));
+    } else {
+      setCurrentEntry(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -64,25 +79,34 @@ const TradingJournal: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
+  
     try {
-      if (isEditing && editingId) {
-        await tradingService.updateTrade(editingId, currentEntry);
-        setIsEditing(false);
-        setEditingId(null);
-      } else {
-        await tradingService.createTrade(currentEntry);
+      console.log('Submitting trade data:', currentEntry);
+      
+      const response = await fetch('/api/trades', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(currentEntry),
+      });
+  
+      const data = await response.json();
+      console.log('Response data:', data);
+  
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Failed to create trade');
       }
+  
       await fetchTrades();
       setCurrentEntry(initialEntry);
     } catch (error) {
+      console.error('Error details:', error);
       setError(error instanceof Error ? error.message : 'An error occurred');
-      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
-  };
-
+  };''
   const handleEdit = (trade: TradeEntry) => {
     setCurrentEntry(trade);
     setEditingId(trade.id);

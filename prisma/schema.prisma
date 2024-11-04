@@ -1,27 +1,27 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = []
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Trade {
   id                Int      @id @default(autoincrement())
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  date             String
-  symbol           String
-  type             String
-  entry            String
-  exit             String
-  quantity         String
+  date             String    // Format: YYYY-MM-DD
+  symbol           String    @db.VarChar(50)
+  type             String    @db.VarChar(10)
+  entry            String    @db.VarChar(50)
+  exit             String    @db.VarChar(50)
+  quantity         String    @db.VarChar(50)
   pnl              Float
-  screenshotUrl    String?
-  technicalAnalysis String?  @db.Text
-  psychologicalNotes String? @db.Text
-  tradeReview      String?  @db.Text
-  rating           String
+  screenshotUrl    String?   @db.Text
+  technicalAnalysis String?   @db.Text
+  psychologicalNotes String?  @db.Text
+  tradeReview      String?   @db.Text
+  rating           String    @db.VarChar(10)
 }
